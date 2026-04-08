@@ -8,50 +8,35 @@ interface LGProps {
 
 function ListGroup({ items, heading, onSelectItem }: LGProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  let placeholder: string[] = [
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-  ];
-  let rank: string;
+
+  const handleName = (index: number, item: string) => {
+    if (item.endsWith("*")) {
+      return "list-group-item disabled";
+    } else if (index === selectedIndex) {
+      return "list-group-item active";
+    } else {
+      return "list-group-item";
+    }
+  };
 
   return (
     <>
       <h1>{heading}</h1>
       {items.length === 0 && <p>No items found</p>}
-      <ol className="list-group">
+      <ul className="list-group">
         {items.map((item, index) => (
           <li
-            className={
-              selectedIndex === index
-                ? "list-group-item active"
-                : "list-group-item"
-            }
+            className={handleName(index, item)}
             key={item}
             onClick={() => {
               setSelectedIndex(index);
               onSelectItem(item);
-              rank = item;
             }}
           >
             {item}
           </li>
         ))}
-      </ol>
-      <ol className="list-group">
-        {placeholder.map((item, index) => (
-          <li className="list-group-item" key={index}>
-            {item}
-          </li>
-        ))}
-      </ol>
+      </ul>
     </>
   );
 }

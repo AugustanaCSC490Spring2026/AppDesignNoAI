@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
-//interface QuizQuestion {
+interface QuizQuestion {
+  action: (item: string) => void;
+}
 
-function QuizQuestions() {
+function QuizQuestions({ action }: QuizQuestion) {
   //Note: these all correspond via list index
   //questions to choose from for quiz
   const questions = ["What is 2+2?"];
@@ -32,7 +34,10 @@ function QuizQuestions() {
                 <li
                   key={option}
                   className="list-group-item"
-                  onClick={() => setSelectedIndex(optionIndex)}
+                  onClick={() => {
+                    setSelectedIndex(optionIndex);
+                    action(option);
+                  }}
                 >
                   <button
                     className={
