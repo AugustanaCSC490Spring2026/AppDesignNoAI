@@ -10,10 +10,12 @@ function ListGroup({ items, heading, onSelectItem }: LGProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const handleName = (index: number, item: string) => {
-    if (item.endsWith("*")) {
+    if (item === " ") {
       return "list-group-item disabled";
     } else if (index === selectedIndex) {
       return "list-group-item active";
+    } else if (item.endsWith(" ")) {
+      return "list-group-item list-group-item-danger";
     } else {
       return "list-group-item";
     }
@@ -23,7 +25,7 @@ function ListGroup({ items, heading, onSelectItem }: LGProps) {
     <>
       <h1>{heading}</h1>
       {items.length === 0 && <p>No items found</p>}
-      <ul className="list-group">
+      <ul className="list-group list-group-flush">
         {items.map((item, index) => (
           <li
             className={handleName(index, item)}

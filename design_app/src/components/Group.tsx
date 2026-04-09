@@ -1,33 +1,49 @@
-import { ReactNode } from "react";
 import { useState } from "react";
 
 interface GroupProps {
   index: number;
   correct: string[];
+  w2A: string[];
   onClick: (item: string) => void;
 }
 
-function Group({ correct, index, onClick }: GroupProps) {
-  const [list, setList] = useState<string[]>([""]);
+function Group({ correct, index, w2A, onClick }: GroupProps) {
+  const [list, setList] = useState<string[]>(w2A);
+  const [state, setState] = useState(0);
 
-  //updates list being displayed in group
-  const handleClick = (words: number, item: string) => {
-    const newList = [...list];
-    newList.push(item);
-    setList(newList);
+  const handleName = (item: string) => {
+    if (item === "Click here to add") {
+      return "list-group-item list-group-item-secondary";
+    } else if (correct.includes(item)) {
+      return "list-group-item list-group-item-success";
+    } else {
+      return "list-group-item list-group-item-danger";
+    }
   };
 
   return (
     <>
       <div>
         <h1>Words with {index} repeated letters</h1>
-        <ul className="list-group">
+        <ul
+          className="list-group"
+          onClick={() => {
+            setList(w2A);
+            setState(state + 1);
+          }}
+          onDoubleClick={() => {
+            const temp = list.filter(
+              (word) => correct.includes(word) || word === "Click here to add",
+            );
+            setList(temp); // not updating list, state is getting updated on first click i think
+            setState(state + 1);
+          }}
+        >
           {list.map((item, index) => (
             <li
-              className="list-group-item"
-              key={item}
+              className={handleName(item)}
+              key={index}
               onClick={() => {
-                handleClick(index, item);
                 onClick(item);
               }}
             >

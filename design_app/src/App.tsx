@@ -1,6 +1,7 @@
 import React from "react";
 import Group from "./components/Group";
 import GroupList from "./components/GroupList";
+import { useState } from "react";
 
 function App() {
   const words = [
@@ -17,6 +18,11 @@ function App() {
     "raspberry",
     "delete",
   ];
+  const words2Add = [
+    ["Click here to add"],
+    ["Click here to add"],
+    ["Click here to add"],
+  ];
   const correct = [
     ["green", "seen", "greet", "color", "tense", "manas", "apple"],
     ["assumes", "irreverent", "raspberry", "delete"],
@@ -30,9 +36,8 @@ function App() {
         <div className="col">
           <GroupList
             items={words}
-            heading="Movies"
+            heading="Word List"
             onSelectItem={(item) => {
-              console.log(item);
               globIt = item;
             }}
           />
@@ -42,8 +47,15 @@ function App() {
             <Group
               correct={correct[i]}
               index={i + 2}
+              w2A={words2Add[i]}
               onClick={() => {
-                words[words.indexOf(globIt)] += "*";
+                if (correct[i].includes(globIt)) {
+                  // if its not correct, word stays in listgroup
+                  words[words.indexOf(globIt)] = " ";
+                }
+                if (!words2Add[i].includes(globIt)) {
+                  words2Add[i].push(globIt);
+                }
               }}
             />
           </div>
