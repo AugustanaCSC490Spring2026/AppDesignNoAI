@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 
 interface GroupProps {
@@ -5,19 +6,25 @@ interface GroupProps {
   correct: string[];
   w2A: string[];
   onClick: (item: string) => void;
+  onClick2: (item: string) => void;
 }
 
-function Group({ correct, index, w2A, onClick }: GroupProps) {
-  const [list, setList] = useState<string[]>(w2A);
+function Group({ correct, index, w2A, onClick, onClick2 }: GroupProps) {
+  const w2ARef = React.useRef(w2A);
+  const [list, setList] = useState<string[]>(w2ARef.current);
   const [state, setState] = useState(0);
+  let db = false;
+  let timer = 0;
+
+  React.useEffect(() => {
+    w2ARef.current = w2A;
+  }, [list]);
 
   const handleName = (item: string) => {
     if (item === "Click here to add") {
       return "list-group-item list-group-item-secondary";
-    } else if (correct.includes(item)) {
-      return "list-group-item list-group-item-success";
     } else {
-      return "list-group-item list-group-item-danger";
+      return "list-group-item";
     }
   };
 
@@ -25,26 +32,24 @@ function Group({ correct, index, w2A, onClick }: GroupProps) {
     <>
       <div>
         <h1>Words with {index} repeated letters</h1>
-        <ul
-          className="list-group"
-          onClick={() => {
-            setList(w2A);
-            setState(state + 1);
-          }}
-          onDoubleClick={() => {
-            const temp = list.filter(
-              (word) => correct.includes(word) || word === "Click here to add",
-            );
-            setList(temp); // not updating list, state is getting updated on first click i think
-            setState(state + 1);
-          }}
-        >
+        <ul className="list-group">
           {list.map((item, index) => (
             <li
               className={handleName(item)}
               key={index}
               onClick={() => {
-                onClick(item);
+                setTimeout(() => {
+                  if (!db) {
+                    onClick(item);
+                  }
+                }, 200);
+                db = false;
+              }}
+              onDoubleClick={() => {
+                db = true;
+                if (item != "Click here to add") {
+                  onClick2(item);
+                }
               }}
             >
               {item}

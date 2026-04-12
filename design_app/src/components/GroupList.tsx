@@ -13,9 +13,8 @@ function ListGroup({ items, heading, onSelectItem }: LGProps) {
     if (item === " ") {
       return "list-group-item disabled";
     } else if (index === selectedIndex) {
+      //maybe good idea to auto deselect after click
       return "list-group-item active";
-    } else if (item.endsWith(" ")) {
-      return "list-group-item list-group-item-danger";
     } else {
       return "list-group-item";
     }
