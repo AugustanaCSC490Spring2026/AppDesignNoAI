@@ -38,9 +38,11 @@ function WordDisplay({ wordList, score, onClick }: WordDisplayProps) {
             <button
               className="btn btn-secondary btn-sm"
               onClick={() => {
-                setIndex(index - 1);
-                setState(state + 1);
-                onClick(-1);
+                if (index > 0) {
+                  setIndex(index - 1);
+                  setState(state + 1);
+                  onClick(-1);
+                }
               }}
             >
               Previous Word

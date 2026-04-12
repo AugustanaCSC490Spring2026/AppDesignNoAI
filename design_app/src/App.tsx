@@ -33,11 +33,11 @@ function App() {
     ["Click here to add"],
     ["Click here to add"],
   ]);
-  const correct = [
+  const [correct, setCorrect] = useState([
     ["green", "seen", "greet", "color", "tense", "manas", "apple", "raspberry"],
     ["assumes", "irreverent", "delete"],
     ["assess"],
-  ];
+  ]);
   const [state, setState] = useState(0);
   const [index, setIndex] = useState(0);
   let globIt = words[index];
@@ -93,6 +93,9 @@ function App() {
                 if (correct[i].includes(globIt)) {
                   // if its not correct, word stays in listgroup
                   setScore(score + 1);
+                  correct[i].splice(correct[i].indexOf(globIt), 1);
+                  setCorrect([...correct]);
+                  setState(state + 1);
                 }
                 if (!words2Add[i].includes(globIt)) {
                   words2Add[i].push(globIt);
