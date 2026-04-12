@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { useEffect } from "react";
 
 interface WordDisplayProps {
   wordList: string[];
-  score: number;
   onClick: (adjust: number) => void;
 }
 
-function WordDisplay({ wordList, score, onClick }: WordDisplayProps) {
+function WordDisplay({ wordList, onClick }: WordDisplayProps) {
   const [index, setIndex] = useState(0);
   const [state, setState] = useState(0);
 
@@ -36,7 +34,6 @@ function WordDisplay({ wordList, score, onClick }: WordDisplayProps) {
         <div className="row">
           <div className="col" style={{ alignSelf: "left" }}>
             <button
-              className="btn btn-secondary btn-sm"
               onClick={() => {
                 if (index > 0) {
                   setIndex(index - 1);
@@ -50,7 +47,7 @@ function WordDisplay({ wordList, score, onClick }: WordDisplayProps) {
           </div>
           <div className="col" style={{ alignSelf: "right" }}>
             <button
-              className="btn btn-secondary btn-sm"
+              style={{ paddingRight: "20px" }}
               onClick={() => {
                 setIndex(index + 1);
                 onClick(1);

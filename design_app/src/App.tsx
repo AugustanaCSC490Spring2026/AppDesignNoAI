@@ -2,6 +2,7 @@ import React from "react";
 import Group from "./components/Group";
 import WordDisplay from "./components/WordDisplay";
 import { useState } from "react";
+import "./App.css";
 
 const handleTime = (time: number) => {
   let temp = "";
@@ -62,7 +63,6 @@ function App() {
           {!done ? (
             <WordDisplay
               wordList={words}
-              score={score}
               onClick={(adjust) => {
                 setIndex(index + adjust);
                 if (index === words.length) {
