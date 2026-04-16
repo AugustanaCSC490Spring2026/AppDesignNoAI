@@ -11,8 +11,10 @@
   "dependencies": {
     "bootstrap": "^5.2.3",
     "convert-array-to-csv": "^2.0.0",
+    "lucide-react": "^1.8.0",
     "node.js": "^0.0.1-security",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {

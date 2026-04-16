@@ -2,23 +2,16 @@ import React from "react";
 import { useState } from "react";
 
 interface GroupProps {
-  index: number;
-  correct: string[];
+  catTitle: string;
   w2A: string[];
   onClick: (item: string) => void;
   onClick2: (item: string) => void;
 }
 
-function Group({ correct, index, w2A, onClick, onClick2 }: GroupProps) {
+function Group({ catTitle, w2A, onClick, onClick2 }: GroupProps) {
   const w2ARef = React.useRef(w2A);
   const [list, setList] = useState<string[]>(w2ARef.current);
-  const [state, setState] = useState(0);
   let db = false;
-  let timer = 0;
-
-  React.useEffect(() => {
-    w2ARef.current = w2A;
-  }, [list]);
 
   const handleName = (item: string) => {
     if (item === "Click here to add") {
@@ -31,7 +24,7 @@ function Group({ correct, index, w2A, onClick, onClick2 }: GroupProps) {
   return (
     <>
       <div>
-        <h1>Words with {index} repeated letters</h1>
+        <h1>{catTitle}</h1>
         <ul className="list-group">
           {list.map((item, index) => (
             <li

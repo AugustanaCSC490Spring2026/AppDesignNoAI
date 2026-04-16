@@ -11,6 +11,7 @@ ul {
 li {
   padding: 20px;
   border-top: 1px solid #ccc;
+  background-color: #eee5e5;
   scroll-snap-align: start;
 }
 
