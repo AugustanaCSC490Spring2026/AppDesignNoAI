@@ -4,6 +4,7 @@ import WordDisplay from "./components/WordDisplay";
 import { useState } from "react";
 import "./App.css";
 import HumanGrouperUI from "./components/HumanGrouperUI";
+import AIGrouperUI from "./components/AIGrouperUI";
 
 const start = Date.now();
 const handleTime = (time: number) => {
@@ -30,6 +31,7 @@ const handleScore = (words: string[][], correct: string[][]): number => {
 };
 
 function App() {
+  const useAI = true;
   const [correct, setCorrect] = useState([
     ["green", "seen", "greet", "color", "tense", "manas", "apple"],
     ["assumes", "irreverent", "delete", "raspberry"],
@@ -57,6 +59,10 @@ function App() {
     alert(`Score: ${score}/${total}\nTime: ${time}`);
   }
   return (
+  <>
+  {useAI ? (
+    <AIGrouperUI />
+  ) : (
     <HumanGrouperUI
       wordList={words}
       categoryTitles={[
@@ -65,7 +71,9 @@ function App() {
         "4+ Repeated Letters",
       ]}
       onFinishedCallback={handleFinishedGrouping}
-    ></HumanGrouperUI>
-  );
+    />
+  )}
+</>);
 }
+
 export default App;
