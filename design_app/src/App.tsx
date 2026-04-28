@@ -31,7 +31,7 @@ const handleScore = (words: string[][], correct: string[][]): number => {
 };
 
 function App() {
-  const useAI = false; 
+  const useAI = true; 
   //change to false to use human UI
   const [correct, setCorrect] = useState([
     ["green", "seen", "greet", "color", "tense", "manas", "apple"],

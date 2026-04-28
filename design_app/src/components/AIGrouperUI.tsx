@@ -1,134 +1,128 @@
-// This code was written entirely by AI (ChatGPT) based on the prompt "Create a React component for grouping words by length. 
-// The UI should allow users to quickly add words, see them grouped, and edit/delete them. 
-// Focus on speed and ease of use, with keyboard support for adding and navigating words."
+import React, { useState, DragEvent } from 'react';
 
-
-import React, { useState, useEffect } from "react";
-
-interface AIGrouperProps {
-  wordList?: string[];
-  categoryTitles?: string[];
-  onFinishedCallback?: (results: string[][]) => void;
+interface AIGrouperUIProps {
+  wordList: string[];
+  categoryTitles: string[];
+  onFinishedCallback: (results: string[][]) => void;
 }
 
-const AIGrouperUI: React.FC<AIGrouperProps> = ({ 
-  wordList = [], 
-  categoryTitles = ["Group 1", "Group 2", "Group 3"], 
+/**
+ * AIGrouperUI: A functional, aesthetic interface for categorizing strings.
+ * Follows UI principles: Visibility of system status, User control, and Aesthetic design.
+ */
+const AIGrouperUI: React.FC<AIGrouperUIProps> = ({ 
+  wordList, 
+  categoryTitles, 
   onFinishedCallback 
 }) => {
-  const [unassigned, setUnassigned] = useState<string[]>([]);
-  const [groups, setGroups] = useState<{ [key: string]: string[] }>({});
-  const [selectedCategory, setSelectedCategory] = useState(categoryTitles[0]);
+  // State to track which words are in which category index
+  // Index -1 represents the "unassigned" pool
+  const [groups, setGroups] = useState<Record<number, string[]>>({
+    [-1]: [...wordList],
+    ...Object.fromEntries(categoryTitles.map((_, i) => [i, []]))
+  });
 
-  // Initialize words from props
-  useEffect(() => {
-    setUnassigned(wordList);
-    const initialGroups: { [key: string]: string[] } = {};
-    categoryTitles.forEach(title => {
-      initialGroups[title] = [];
+  const [draggedWord, setDraggedWord] = useState<{ word: string; fromIndex: number } | null>(null);
+
+  // --- Handlers ---
+
+  const onDragStart = (word: string, fromIndex: number) => {
+    setDraggedWord({ word, fromIndex });
+  };
+
+  const onDrop = (toIndex: number) => {
+    if (!draggedWord) return;
+
+    const { word, fromIndex } = draggedWord;
+    if (fromIndex === toIndex) return;
+
+    setGroups(prev => {
+      const newGroups = { ...prev };
+      // Remove from old
+      newGroups[fromIndex] = newGroups[fromIndex].filter(w => w !== word);
+      // Add to new
+      newGroups[toIndex] = [...newGroups[toIndex], word];
+      return newGroups;
     });
-    setGroups(initialGroups);
-  }, [wordList, categoryTitles]);
-
-  const handleMoveToGroup = (word: string) => {
-    // Remove from unassigned
-    setUnassigned((prev) => prev.filter((w) => w !== word));
-    // Add to current selected group
-    setGroups((prev) => ({
-      ...prev,
-      [selectedCategory]: [...prev[selectedCategory], word],
-    }));
+    setDraggedWord(null);
   };
 
-  const handleRemoveFromGroup = (word: string, category: string) => {
-    setGroups((prev) => ({
-      ...prev,
-      [category]: prev[category].filter((w) => w !== word),
-    }));
-    setUnassigned((prev) => [...prev, word]);
+  const handleFinish = () => {
+    // Map the titles back to the nested array format for the callback
+    const results = categoryTitles.map((_, i) => groups[i]);
+    onFinishedCallback(results);
   };
 
-  const handleSubmit = () => {
-    if (onFinishedCallback) {
-      // Convert object groups back to 2D array for the App's scorer
-      const result = categoryTitles.map(title => groups[title]);
-      onFinishedCallback(result);
-    }
-  };
+  const isComplete = groups[-1].length === 0;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>AI Power Grouper</h1>
-      
-      {/* Category Selector */}
-      <div style={styles.selectorContainer}>
-        <span>Assigning to: </span>
-        {categoryTitles.map(title => (
-          <button 
-            key={title} 
-            onClick={() => setSelectedCategory(title)}
-            style={{
-              ...styles.tabButton, 
-              backgroundColor: selectedCategory === title ? "#007bff" : "#eee",
-              color: selectedCategory === title ? "white" : "black"
-            }}
-          >
-            {title}
-          </button>
-        ))}
-      </div>
+    <div className="flex flex-col w-full max-w-6xl mx-auto p-8 font-sans text-slate-800 bg-gray-50 rounded-2xl shadow-sm">
+      <header className="mb-8 border-b border-gray-200 pb-4">
+        <h1 className="text-2xl font-light tracking-tight text-slate-900">Word Grouper</h1>
+        <p className="text-sm text-slate-500">Drag items into their respective columns.</p>
+      </header>
 
-      <div style={styles.mainGrid}>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Unassigned Pool */}
-        <div style={styles.pool}>
-          <h3>Unassigned Words</h3>
-          <div style={styles.wordList}>
-            {unassigned.map(word => (
-              <button key={word} onClick={() => handleMoveToGroup(word)} style={styles.wordItem}>
-                {word} +
-              </button>
+        <section 
+          className="lg:col-span-1 bg-white p-4 rounded-xl border-2 border-dashed border-gray-200 min-h-[400px]"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={() => onDrop(-1)}
+        >
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Pending</h2>
+          <div className="flex flex-wrap gap-2">
+            {groups[-1].map((word) => (
+              <WordCard key={word} word={word} onDragStart={() => onDragStart(word, -1)} />
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Grouped Buckets */}
-        <div style={styles.results}>
-          {categoryTitles.map(title => (
-            <div key={title} style={styles.groupBucket}>
-              <strong>{title} ({groups[title]?.length || 0})</strong>
-              <div style={styles.miniList}>
-                {groups[title]?.map(word => (
-                  <span key={word} onClick={() => handleRemoveFromGroup(word, title)} style={styles.wordBadge}>
-                    {word} ✕
-                  </span>
+        {/* Categories */}
+        <section className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {categoryTitles.map((title, idx) => (
+            <div 
+              key={title}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => onDrop(idx)}
+              className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col transition-colors duration-200 hover:border-blue-200"
+            >
+              <h3 className="text-sm font-semibold text-blue-600 mb-3">{title}</h3>
+              <div className="flex-1 space-y-2">
+                {groups[idx].map((word) => (
+                  <WordCard key={word} word={word} onDragStart={() => onDragStart(word, idx)} />
                 ))}
               </div>
             </div>
           ))}
-        </div>
+        </section>
       </div>
 
-      <button onClick={handleSubmit} style={styles.submitButton}>
-        Submit Groups & View Score
-      </button>
+      <footer className="mt-10 flex justify-end">
+        <button
+          onClick={handleFinish}
+          disabled={!isComplete}
+          className={`px-8 py-3 rounded-full font-medium transition-all ${
+            isComplete 
+            ? "bg-slate-900 text-white hover:bg-slate-800 shadow-md" 
+            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          Complete Grouping
+        </button>
+      </footer>
     </div>
   );
 };
 
-export default AIGrouperUI;
+// Sub-component for individual word items to maintain DRY principles
+const WordCard = ({ word, onDragStart }: { word: string; onDragStart: () => void }) => (
+  <div
+    draggable
+    onDragStart={onDragStart}
+    className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm cursor-grab active:cursor-grabbing hover:bg-white hover:shadow-sm transition-all"
+  >
+    {word}
+  </div>
+);
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: { maxWidth: "900px", margin: "0 auto", padding: "20px", fontFamily: "system-ui, sans-serif" },
-  title: { textAlign: "center", color: "#333" },
-  selectorContainer: { display: "flex", gap: "10px", alignItems: "center", marginBottom: "20px", padding: "10px", background: "#f9f9f9", borderRadius: "8px" },
-  tabButton: { padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" },
-  mainGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" },
-  pool: { border: "2px dashed #ccc", padding: "15px", borderRadius: "8px", minHeight: "300px" },
-  wordList: { display: "flex", flexWrap: "wrap", gap: "8px" },
-  wordItem: { padding: "6px 12px", cursor: "pointer", background: "white", border: "1px solid #ddd", borderRadius: "4px" },
-  results: { display: "flex", flexDirection: "column", gap: "15px" },
-  groupBucket: { padding: "10px", border: "1px solid #eee", borderRadius: "6px", background: "#fff" },
-  miniList: { display: "flex", flexWrap: "wrap", gap: "5px", marginTop: "5px" },
-  wordBadge: { fontSize: "12px", padding: "2px 8px", background: "#e9ecef", borderRadius: "12px", cursor: "pointer" },
-  submitButton: { width: "100%", marginTop: "30px", padding: "15px", fontSize: "18px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }
-};
+export default AIGrouperUI;
