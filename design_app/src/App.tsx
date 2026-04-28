@@ -31,7 +31,8 @@ const handleScore = (words: string[][], correct: string[][]): number => {
 };
 
 function App() {
-  const useAI = true;
+  const useAI = false; 
+  //change to false to use human UI
   const [correct, setCorrect] = useState([
     ["green", "seen", "greet", "color", "tense", "manas", "apple"],
     ["assumes", "irreverent", "delete", "raspberry"],
@@ -52,24 +53,51 @@ function App() {
     "delete",
   ];
 
+  const categoryTitles = [
+    "2 Repeated Letters",
+    "3 Repeated Letters", 
+    "4+ Repeated Letters"];
+    
   function handleFinishedGrouping(groupedResults: string[][]): void {
     const score = handleScore(groupedResults, correct);
     const total = correct.reduce((acc, grp) => acc + grp.length, 0);
     const time = handleTime(Date.now());
+   // alert(`Score: ${score}/${total}\nTime: ${time}`);
+
+    // Send results to backend
+    const results = {
+      mode: useAI ? "AI" : "Human",
+      score: `${score}/${total}`,
+      time: time,
+    };
+
+    try{
+
+      fetch("http://localhost:3001/api/results", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(results),
+      });
+    } catch (error) {
+      console.error("Error sending results to backend:", error);
+    }
     alert(`Score: ${score}/${total}\nTime: ${time}`);
   }
+
   return (
   <>
   {useAI ? (
-    <AIGrouperUI />
+    <AIGrouperUI
+      wordList={words}
+      categoryTitles={categoryTitles}
+      onFinishedCallback={handleFinishedGrouping}
+     />
   ) : (
     <HumanGrouperUI
       wordList={words}
-      categoryTitles={[
-        "2 Repeated Letters",
-        "3 Repeated Letters",
-        "4+ Repeated Letters",
-      ]}
+      categoryTitles={categoryTitles}
       onFinishedCallback={handleFinishedGrouping}
     />
   )}
