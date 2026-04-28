@@ -58,7 +58,7 @@ function App() {
     "3 Repeated Letters", 
     "4+ Repeated Letters"];
     
-  function handleFinishedGrouping(groupedResults: string[][]): void {
+  async function handleFinishedGrouping(groupedResults: string[][]){
     const score = handleScore(groupedResults, correct);
     const total = correct.reduce((acc, grp) => acc + grp.length, 0);
     const time = handleTime(Date.now());
@@ -71,19 +71,24 @@ function App() {
       time: time,
     };
 
-    try{
+    
+    try {
+    const response = await fetch("http://localhost:3001/api/results", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(results),
+    });
 
-      fetch("http://localhost:3001/api/results", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(results),
-      });
-    } catch (error) {
-      console.error("Error sending results to backend:", error);
+    if (response.ok) {
+      console.log("Success: Recorded to CSV");
+    } else {
+      console.error("Server Error:", response.statusText);
     }
-    alert(`Score: ${score}/${total}\nTime: ${time}`);
+  } catch (error) {
+    console.error("Connection Error:", error);
+  }
+
+  alert(`Score: ${score}/${total}\nTime: ${time}`);
   }
 
   return (

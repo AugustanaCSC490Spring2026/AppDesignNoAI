@@ -5,12 +5,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
-app.post('/submit-results', (req, res) => {
-  const { mode, score, corrections, time } = req.body;
-  const newEntry = `${mode}, ${score}, ${corrections}, ${time}\n`;
+
+app.post('/api/results', (req, res) => {
+  const { mode, score, time } = req.body;
+  const newEntry = `${mode}, ${score}, ${time}\n`;
   const filePath = path.join(__dirname, 'results.csv');
+  console.log("ABSOLUTE PATH:", filePath);
   fs.appendFile(filePath, newEntry, (err) => {
     if (err) {
       console.error('Error writing to CSV file:', err);
