@@ -10,8 +10,8 @@ app.use(express.json());
 
 
 app.post('/api/results', (req, res) => {
-  const { mode, score, time } = req.body;
-  const newEntry = `${mode}, ${score}, ${time}\n`;
+  const { id, mode, score, time } = req.body;
+  const newEntry = `${id} ${mode}, ${score}, ${time}\n`;
   const filePath = path.join(__dirname, 'results.csv');
   console.log("ABSOLUTE PATH:", filePath);
   fs.appendFile(filePath, newEntry, (err) => {
