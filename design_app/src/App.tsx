@@ -3,8 +3,7 @@ import Group from "./components/Group";
 import WordDisplay from "./components/WordDisplay";
 import { useState } from "react";
 import "./App.css";
-import HumanGrouperUI from "./components/HumanGrouperUI";
-import AIGrouperUI from "./components/AIGrouperUI";
+import SuperComp from "./components/SuperComp";
 
 const start = Date.now();
 const handleTime = (time: number) => {
@@ -31,7 +30,7 @@ const handleScore = (words: string[][], correct: string[][]): number => {
 };
 
 function App() {
-  const useAI = true; 
+  const [useAI, setUseAI] = useState(0);
   //change to false to use human UI
   const [correct, setCorrect] = useState([
     ["green", "seen", "greet", "color", "tense", "manas", "apple"],
@@ -55,58 +54,53 @@ function App() {
 
   const categoryTitles = [
     "2 Repeated Letters",
-    "3 Repeated Letters", 
-    "4+ Repeated Letters"];
-    
-  async function handleFinishedGrouping(groupedResults: string[][]){
+    "3 Repeated Letters",
+    "4+ Repeated Letters",
+  ];
+  const id = 0;
+
+  async function handleFinishedGrouping(groupedResults: string[][]) {
     const score = handleScore(groupedResults, correct);
     const total = correct.reduce((acc, grp) => acc + grp.length, 0);
     const time = handleTime(Date.now());
-   // alert(`Score: ${score}/${total}\nTime: ${time}`);
+    setUseAI(useAI + 1);
 
     // Send results to backend
     const results = {
-      mode: useAI ? "AI" : "Human",
+      id: id,
+      mode: useAI === 0 ? "AI" : "Human",
       score: `${score}/${total}`,
       time: time,
     };
 
-    
     try {
-    const response = await fetch("http://localhost:3001/api/results", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(results),
-    });
+      const response = await fetch("http://localhost:3001/api/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(results),
+      });
 
-    if (response.ok) {
-      console.log("Success: Recorded to CSV");
-    } else {
-      console.error("Server Error:", response.statusText);
+      if (response.ok) {
+        console.log("Success: Recorded to CSV");
+      } else {
+        console.error("Server Error:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Connection Error:", error);
     }
-  } catch (error) {
-    console.error("Connection Error:", error);
-  }
 
-  alert(`Score: ${score}/${total}\nTime: ${time}`);
+    alert(`Score: ${score}/${total}\nTime: ${time}\nID#: ${id}`);
   }
 
   return (
-  <>
-  {useAI ? (
-    <AIGrouperUI
-      wordList={words}
-      categoryTitles={categoryTitles}
-      onFinishedCallback={handleFinishedGrouping}
-     />
-  ) : (
-    <HumanGrouperUI
+    <SuperComp
+      useAI={useAI}
+      id={id}
       wordList={words}
       categoryTitles={categoryTitles}
       onFinishedCallback={handleFinishedGrouping}
     />
-  )}
-</>);
+  );
 }
 
 export default App;

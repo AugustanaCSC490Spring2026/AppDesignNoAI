@@ -53,8 +53,5 @@ function Group({ catTitle, w2A, onClick, onClick2 }: GroupProps) {
     </>
   );
 }
-//the choices from our group list should be added to these, each element should change if correct/wrong
-// so basically we need onClick to add the item to list, update holding component to green/red
-// items also need to be removeable, should still take incorrect answer into account for score (maybe a remove/add button for each group?)
 
 export default Group;
