@@ -24,23 +24,6 @@ function HumanGrouperUI({
   let globIt = wordList[index];
   const [done, setDone] = useState(false);
 
-  // useEffect(() => {
-  //   const handleGlobalKey = (e: KeyboardEvent) => {
-  //     if (e.key === "ArrowLeft") {
-  //       if (index > 0) {
-  //         setIndex(index - 1);
-  //       }
-  //     } else if (e.key === "ArrowRight") {
-  //       setIndex(index + 1);
-  //       if (index === words.length) {
-  //         setDone(true);
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("keydown", handleGlobalKey);
-  //   return () => window.removeEventListener("keydown", handleGlobalKey);
-  // }, []);
-
   return (
     <div className="container">
       <div className="row">

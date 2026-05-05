@@ -1,6 +1,3 @@
-import React, { useEffect } from "react";
-import Group from "./components/Group";
-import WordDisplay from "./components/WordDisplay";
 import { useState } from "react";
 import "./App.css";
 import SuperComp from "./components/SuperComp";
@@ -57,13 +54,14 @@ function App() {
     "3 Repeated Letters",
     "4+ Repeated Letters",
   ];
-  const id = 0;
+  const id = 3;
 
   async function handleFinishedGrouping(groupedResults: string[][]) {
     const score = handleScore(groupedResults, correct);
     const total = correct.reduce((acc, grp) => acc + grp.length, 0);
     const time = handleTime(Date.now());
     setUseAI(useAI + 1);
+    alert(`Score: ${score}/${total}\nTime: ${time}\nID#: ${id}`);
 
     // Send results to backend
     const results = {
@@ -88,8 +86,6 @@ function App() {
     } catch (error) {
       console.error("Connection Error:", error);
     }
-
-    alert(`Score: ${score}/${total}\nTime: ${time}\nID#: ${id}`);
   }
 
   return (
