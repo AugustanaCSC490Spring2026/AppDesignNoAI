@@ -19,13 +19,13 @@ function SuperComp({
 }: SuperCompProps) {
   return (
     <>
-      {useAI === 0 ? (
+      {useAI === 1 ? (
         <AIGrouperUI
           wordList={wordList}
           categoryTitles={categoryTitles}
           onFinishedCallback={onFinishedCallback}
         />
-      ) : useAI === 1 ? (
+      ) : useAI === 0 ? (
         <HumanGrouperUI
           wordList={wordList}
           categoryTitles={categoryTitles}
