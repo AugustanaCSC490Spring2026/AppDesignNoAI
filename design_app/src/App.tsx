@@ -54,7 +54,7 @@ function App() {
     "3 Repeated Letters",
     "4+ Repeated Letters",
   ];
-  const id = 17;
+  const id = 20;
 
   async function handleFinishedGrouping(groupedResults: string[][]) {
     const score = handleScore(groupedResults, correct);
@@ -66,7 +66,7 @@ function App() {
     // Send results to backend
     const results = {
       id: id,
-      mode: useAI === 1 ? "AI" : "Human",
+      mode: useAI === 0 ? "AI" : "Human", //odd = 1, even = 0
       score: `${score}/${total}`,
       time: time,
     };

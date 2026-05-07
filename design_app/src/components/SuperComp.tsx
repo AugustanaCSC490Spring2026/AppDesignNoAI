@@ -18,14 +18,15 @@ function SuperComp({
   onFinishedCallback,
 }: SuperCompProps) {
   return (
+    // odd = (1,0) even = (0,1)
     <>
-      {useAI === 1 ? (
+      {useAI === 0 ? (
         <AIGrouperUI
           wordList={wordList}
           categoryTitles={categoryTitles}
           onFinishedCallback={onFinishedCallback}
         />
-      ) : useAI === 0 ? (
+      ) : useAI === 1 ? (
         <HumanGrouperUI
           wordList={wordList}
           categoryTitles={categoryTitles}
