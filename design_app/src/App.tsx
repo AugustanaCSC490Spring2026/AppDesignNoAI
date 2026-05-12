@@ -54,7 +54,7 @@ function App() {
     "3 Repeated Letters",
     "4+ Repeated Letters",
   ];
-  const id = 20;
+  const id = 30;
 
   async function handleFinishedGrouping(groupedResults: string[][]) {
     const score = handleScore(groupedResults, correct);

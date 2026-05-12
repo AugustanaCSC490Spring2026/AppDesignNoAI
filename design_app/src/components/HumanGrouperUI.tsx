@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import WordDisplay from "./WordDisplay";
 import Group from "./Group";
+import { useImmer } from "use-immer";
 
 interface HumanGrouperProps {
   wordList: string[];
@@ -37,7 +38,7 @@ function HumanGrouperUI({
                   console.log(words2Add);
                   setDone(true);
                   onFinishedCallback(words2Add);
-                  setState(state + 1);
+                  //setState(state + 1);
                 }
               }}
             />
